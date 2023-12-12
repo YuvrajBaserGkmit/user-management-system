@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+      - cache
+  db:
+    image: postgres
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=pgsql
+      - POSTGRES_PASSWORD=12345678
+    volumes:
+      - './data:/var/lib/postgresql/data'
+      - './dumps:/dumps'
+    ports:
+      - "5432:5432"
+  cache:
+    image: redis:alpine
+    container_name: redis_cache
+    ports:
+      - 6379:6379
