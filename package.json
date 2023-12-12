@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test npx jest --coverage",
     "prepare": "husky install",
-    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
     "seed": "npx sequelize-cli db:seed:all",
@@ -21,6 +22,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.465.0",
     "@aws-sdk/lib-storage": "^3.462.0",
+    "@grpc/grpc-js": "^1.9.12",
+    "@grpc/proto-loader": "^0.7.10",
     "aws-sdk": "^2.1509.0",
     "aws-sdk-js-codemod": "^0.28.2",
     "bcrypt": "^5.1.1",
@@ -32,7 +35,9 @@
     "joi": "^17.11.0",
     "joi-password-complexity": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
+    "kafkajs": "^2.2.4",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.7",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "redis": "^4.6.10",
