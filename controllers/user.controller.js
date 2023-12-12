@@ -152,6 +152,7 @@ const createUserPreference = async (req, res, next) => {
 
     // Calling userService to create user preferences and getting the response
     const response = await userService.createUserPreference(payload);
+    await userService.sendUserPreferenceUsingKafka(response);
 
     // Setting the response data and status code, and passing control to the next middleware
     res.data = response;

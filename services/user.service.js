@@ -5,6 +5,8 @@ const razorpayIfsc = require('ifsc'); // Library for validating IFSC codes
 const models = require('../models');
 const { uploadUserProfileImage } = require('../helpers/aws.helper');
 const { set } = require('../helpers/redis.helper');
+const { kafka } = require('./../kafka/client');
+const producer = kafka.producer();
 
 const {
   SECRET_KEY_ACCESS_TOKEN,
@@ -264,6 +266,25 @@ const updateUserProfile = async (payload) => {
   return 'User profile image added successfully';
 };
 
+// Function to send user preference using kafka producer
+const sendUserPreferenceUsingKafka = async (payload) => {
+  const { user_id, genre } = payload;
+  await producer.connect();
+  await producer.send({
+    topic: 'user-preference',
+    messages: [
+      {
+        key: 'userPreference',
+        value: JSON.stringify({
+          userId: user_id,
+          genre: genre,
+        }),
+      },
+    ],
+  });
+  await producer.disconnect();
+};
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -274,4 +295,5 @@ module.exports = {
   createUserProfile,
   updateUserProfile,
   createUserPreference,
+  sendUserPreferenceUsingKafka,
 };
