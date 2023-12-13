@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const objectId = require('joi-objectid')(Joi);
 const passwordComplexity = require('joi-password-complexity');
 
 const { validateRequest } = require('../helpers/validate.helper');
@@ -54,7 +55,7 @@ const userProfileSchema = (req, res, next) => {
 // Validate user preference schema using Joi
 const userPreferenceSchema = (req, res, next) => {
   const schema = Joi.object({
-    genre: Joi.string().min(3).max(30).label('Genre'),
+    genreId: objectId().label('Genre Id'),
   });
 
   // Validate request body against the schema

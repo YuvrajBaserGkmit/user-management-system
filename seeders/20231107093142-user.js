@@ -13,6 +13,7 @@ module.exports = {
       password: password,
       role: role,
     };
+    // create a admin user in the database
     await queryInterface.bulkInsert('users', [payload], {});
   },
 

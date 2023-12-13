@@ -72,7 +72,7 @@ const serializeUserPreferences = (req, res, next) => {
   for (const userPreference of rows) {
     response.push({
       id: userPreference.id,
-      genre: userPreference.genre,
+      genreId: userPreference.genre,
       userId: userPreference.user_id,
     });
   }

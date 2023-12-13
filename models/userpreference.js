@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserPreference.init(
     {
-      genre: {
+      genre_id: {
         type: DataTypes.STRING,
         allowNull: false,
       },
