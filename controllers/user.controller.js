@@ -144,15 +144,14 @@ const createUserProfile = async (req, res, next) => {
   }
 };
 
-// Controller function for creating user preferences
-const createUserPreference = async (req, res, next) => {
+// Controller function for creating and sending user preferences using kafka producer
+const createAndSendUserPreference = async (req, res, next) => {
   try {
     const { body, params } = req;
     const payload = { ...params, ...body };
 
-    // Calling userService to create user preferences and getting the response
-    const response = await userService.createUserPreference(payload);
-    await userService.sendUserPreferenceUsingKafka(response);
+    // Calling userService to create and send user preference using kafka producer
+    const response = await userService.createAndSendUserPreference(payload);
 
     // Setting the response data and status code, and passing control to the next middleware
     res.data = response;
@@ -190,6 +189,6 @@ module.exports = {
   deleteUser,
   createUserPaymentDetail,
   createUserProfile,
+  createAndSendUserPreference,
   updateUserProfile,
-  createUserPreference,
 };

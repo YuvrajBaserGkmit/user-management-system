@@ -75,7 +75,7 @@ router.post(
   authMiddleware.checkPermission('user'),
   commonValidator.idSchema,
   userValidator.userPreferenceSchema,
-  userController.createUserPreference,
+  userController.createAndSendUserPreference,
   userSerializer.serializeUserPreferences,
   genericResponse.sendResponse,
 );

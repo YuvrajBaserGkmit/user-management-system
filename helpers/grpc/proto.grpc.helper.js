@@ -8,16 +8,20 @@ const createProtoFile = async (protoUrl) => {
   const protoContent = await protoResponse.text();
 
   // Check if the 'protos' directory exists, create it if not
-  if (!fs.existsSync(path.join(__dirname, '..', 'protos')))
-    fs.mkdirSync(path.join(__dirname, '..', 'protos'));
+  if (!fs.existsSync(path.join(__dirname, '..', '..', 'protos')))
+    fs.mkdirSync(path.join(__dirname, '..', '..', 'protos'));
 
   // Extract the file name from the URL and create the local proto file path
   const protoFileName = protoUrl.substring(protoUrl.lastIndexOf('/') + 1);
-  const protoFilePath = path.join(__dirname, '..', 'protos', protoFileName);
+  const protoFilePath = path.join(
+    __dirname,
+    '..',
+    '..',
+    'protos',
+    protoFileName,
+  );
 
   fs.writeFileSync(protoFilePath, protoContent);
-
-  return protoFilePath;
 };
 
 module.exports = {

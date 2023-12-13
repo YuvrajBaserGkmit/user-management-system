@@ -13,6 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Generate and return html email template from the provided data
 const generateMailBodyHtml = (data) => {
   let emailData = `
     <tr><th colspan=2 style="text-align: center;"><img src=${data.s3LinkThumbnail}></th></tr>
@@ -23,6 +24,8 @@ const generateMailBodyHtml = (data) => {
       </th>
     </tr>
     `;
+
+  // Add fields in the array which need to be removed from the data
   const itemsToBeRemoved = [
     'genres',
     'id',
@@ -31,8 +34,9 @@ const generateMailBodyHtml = (data) => {
     's3Link720p',
     's3Link1080p',
   ];
-  for (const item of itemsToBeRemoved) delete data[item];
 
+  // Filter the data and set only required fields in the html body
+  for (const item of itemsToBeRemoved) delete data[item];
   for (const key in data) {
     emailData += `
       <tr>
@@ -42,6 +46,7 @@ const generateMailBodyHtml = (data) => {
       `;
   }
 
+  // Set email data in the html template
   const mailBodyHtml = `
   <!DOCTYPE html>
   <html>
@@ -71,12 +76,12 @@ const generateMailBodyHtml = (data) => {
 };
 
 // Send email using the configured transporter
-const sendMail = async (subject, recipients, mailBodyDataObject) => {
+const sendMail = async (subject, recipient, mailBodyDataObject) => {
   const html = generateMailBodyHtml(mailBodyDataObject);
 
   var mailOptions = {
     from: MAIL_USERNAME,
-    to: recipients,
+    to: recipient,
     subject: subject,
     html: html,
   };

@@ -1,15 +1,13 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const razorpayIfsc = require('ifsc'); // Library for validating IFSC codes
-const { Partitioners } = require('kafkajs');
 
 const models = require('../models');
 const { uploadUserProfileImage } = require('../helpers/aws.helper');
 const { set } = require('../helpers/redis.helper');
-const { kafka } = require('./../kafka/client');
-const producer = kafka.producer({
-  createPartitioner: Partitioners.DefaultPartitioner,
-});
+const {
+  sendUserPreference,
+} = require('../helpers/kafka/producer.kafka.helper');
 
 const {
   SECRET_KEY_ACCESS_TOKEN,
@@ -225,12 +223,12 @@ const createUserProfile = async (payload) => {
   return userProfile;
 };
 
-// Function to create user preferences
-const createUserPreference = async (payload) => {
-  const { genre, id } = payload;
+// Function to create and send user preferences using kafka producer
+const createAndSendUserPreference = async (payload) => {
+  const { genreId, id } = payload;
 
   const genreExist = await models.UserPreference.findOne({
-    where: { user_id: id, genre: genre },
+    where: { user_id: id, genre_id: genreId },
   });
   if (genreExist) {
     const error = new Error('User already have this preference');
@@ -240,12 +238,15 @@ const createUserPreference = async (payload) => {
 
   // Creating user preferences in the database
   const userPreferencePayload = {
-    genre: genre.toLowerCase().trim(),
+    genre_id: genreId,
     user_id: id,
   };
   const userPreference = await models.UserPreference.create(
     userPreferencePayload,
   );
+
+  // Calling sendUserPreference to produce a user preference message using kafka producer
+  sendUserPreference(payload);
 
   return userPreference;
 };
@@ -269,25 +270,6 @@ const updateUserProfile = async (payload) => {
   return 'User profile image added successfully';
 };
 
-// Function to send user preference using kafka producer
-const sendUserPreferenceUsingKafka = async (payload) => {
-  const { user_id, genre } = payload;
-  await producer.connect();
-  await producer.send({
-    topic: 'user-preference',
-    messages: [
-      {
-        key: 'userPreference',
-        value: JSON.stringify({
-          userId: user_id,
-          genre: genre,
-        }),
-      },
-    ],
-  });
-  await producer.disconnect();
-};
-
 module.exports = {
   getAllUsers,
   createUser,
@@ -297,6 +279,5 @@ module.exports = {
   createUserPaymentDetail,
   createUserProfile,
   updateUserProfile,
-  createUserPreference,
-  sendUserPreferenceUsingKafka,
+  createAndSendUserPreference,
 };
